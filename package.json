@@ -3,9 +3,12 @@
     "dev": "bun run --hot src/index.ts"
   },
   "dependencies": {
-    "hono": "^3.8.2"
+    "drizzle-orm": "^0.28.6",
+    "hono": "^3.8.2",
+    "zod": "^3.22.4"
   },
   "devDependencies": {
-    "bun-types": "^1.0.7"
+    "bun-types": "^1.0.7",
+    "drizzle-kit": "^0.19.13"
   }
 }
