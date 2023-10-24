@@ -4,7 +4,9 @@
     "generate": "drizzle-kit generate:sqlite"
   },
   "dependencies": {
+    "@hono/zod-validator": "^0.1.10",
     "drizzle-orm": "^0.28.6",
+    "drizzle-zod": "^0.5.1",
     "hono": "^3.8.2",
     "zod": "^3.22.4"
   },
