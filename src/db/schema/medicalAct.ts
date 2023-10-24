@@ -1,7 +1,7 @@
 import { sqliteTable, integer, text, real } from "drizzle-orm/sqlite-core";
 import { sql } from "drizzle-orm";
 
-export const medicalAct = sqliteTable('medicalAct', {
+export const medicalActs = sqliteTable('medicalAct', {
     id: integer('id').primaryKey(),
     date : integer('date', { mode: 'timestamp' }).default(sql`CURRENT_TIMESTAMP`),
     place : text('place'),
@@ -13,4 +13,4 @@ export const medicalAct = sqliteTable('medicalAct', {
     isPaid : integer('isPaid', { mode: 'boolean' }).default(sql`FALSE`)
 });
 
-export type MedAct = typeof medicalAct.$inferSelect;
+export type MedAct = typeof medicalActs.$inferSelect;
