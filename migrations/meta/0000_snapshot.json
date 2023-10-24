@@ -1,7 +1,7 @@
 {
   "version": "5",
   "dialect": "sqlite",
-  "id": "3d7f585a-51b4-436e-afb9-a4da069cccbd",
+  "id": "6c135619-19e3-4c45-98e6-e6faadd03833",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "user": {
@@ -14,8 +14,8 @@
           "notNull": true,
           "autoincrement": false
         },
-        "socialID": {
-          "name": "socialID",
+        "securityNumber": {
+          "name": "securityNumber",
           "type": "text",
           "primaryKey": false,
           "notNull": false,
@@ -41,20 +41,13 @@
           "primaryKey": false,
           "notNull": false,
           "autoincrement": false
-        },
-        "gender": {
-          "name": "gender",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
         }
       },
       "indexes": {
-        "user_socialID_unique": {
-          "name": "user_socialID_unique",
+        "user_securityNumber_unique": {
+          "name": "user_securityNumber_unique",
           "columns": [
-            "socialID"
+            "securityNumber"
           ],
           "isUnique": true
         }

@@ -1,10 +1,9 @@
 CREATE TABLE `user` (
 	`id` integer PRIMARY KEY NOT NULL,
-	`socialID` text,
+	`securityNumber` text,
 	`firstName` text,
 	`lastName` text,
-	`password` text,
-	`gender` text
+	`password` text
 );
 --> statement-breakpoint
-CREATE UNIQUE INDEX `user_socialID_unique` ON `user` (`socialID`);
+CREATE UNIQUE INDEX `user_securityNumber_unique` ON `user` (`securityNumber`);
