@@ -1,8 +1,10 @@
 {
   "scripts": {
-    "dev": "bun run --hot src/index.ts"
+    "dev": "bun run --hot src/index.ts",
+    "generate": "drizzle-kit generate:sqlite"
   },
   "dependencies": {
+    "better-sqlite3": "^9.0.0",
     "drizzle-orm": "^0.28.6",
     "hono": "^3.8.2",
     "zod": "^3.22.4"
