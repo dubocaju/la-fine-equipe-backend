@@ -45,7 +45,13 @@ app.post('/api/sign-in', zValidator('json', signInUserSchema), async (c) => {
         .setIssuer(JWT_ISSUER)
         .sign(JWT_SECRET);
 
-    return c.json({ token: jwt }, 200);
+    const userPayload = {
+        securityNumber: user.securityNumber,
+        firstName: user.firstName,
+        lastName: user.lastName,
+    };
+
+    return c.json({ user: userPayload, token: jwt }, 200);
 });
 
 app.onError((err, c) => {
