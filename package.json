@@ -13,6 +13,7 @@
   },
   "devDependencies": {
     "bun-types": "^1.0.7",
-    "drizzle-kit": "^0.19.13"
+    "drizzle-kit": "^0.19.13",
+    "prettier": "3.0.3"
   }
 }
