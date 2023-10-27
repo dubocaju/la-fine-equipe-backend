@@ -6,6 +6,7 @@ import { BunSQLiteDatabase, drizzle } from 'drizzle-orm/bun-sqlite';
 import { Hono } from 'hono';
 import { cors } from 'hono/cors';
 import * as jose from 'jose';
+import { z } from 'zod';
 import { signInUserSchema, signUpUserSchema, users } from './db/schema/users';
 import { JWT_ISSUER, JWT_SECRET } from './jwtConfig';
 
@@ -17,13 +18,13 @@ const app = new Hono();
 
 app.use('/api/*', cors());
 
-app.post('/api/signUp', zValidator('json', signUpUserSchema), async (c) => {
+app.post('/api/sign-up', zValidator('json', signUpUserSchema), async (c) => {
     const user = c.req.valid('json');
     await db.insert(users).values(user);
     return c.body(null, 201);
 });
 
-app.post('/api/signIn', zValidator('json', signInUserSchema), async (c) => {
+app.post('/api/sign-in', zValidator('json', signInUserSchema), async (c) => {
     const body = c.req.valid('json');
     const result = await db
         .select()
@@ -47,4 +48,13 @@ app.post('/api/signIn', zValidator('json', signInUserSchema), async (c) => {
     return c.json({ token: jwt }, 200);
 });
 
+app.onError((err, c) => {
+    console.error(`${err}`);
+    if (err instanceof z.ZodError) {
+        return c.text('Input validation failed', 400);
+    }
+    return c.text('Internal Server Error', 500);
+});
+
+app.showRoutes();
 export default app;
