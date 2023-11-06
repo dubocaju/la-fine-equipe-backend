@@ -8,8 +8,8 @@ import * as jose from 'jose';
 import { z } from 'zod';
 import { users } from './db/schemas/users';
 import { JWT_ISSUER, JWT_SECRET } from './jwtConfig';
-import { swaggerUIHtml } from './openapi/swagger/swaggerUiHtml';
 import { signInRoute, signUpRoute } from './openapi/routes/user';
+import { swaggerUI } from '@hono/swagger-ui';
 
 const sqlite: Database = new Database('database.sqlite');
 const db: BunSQLiteDatabase = drizzle(sqlite);
@@ -62,7 +62,12 @@ app.doc('/doc/', {
     },
 });
 
-app.get('/swagger', (c) => c.html(swaggerUIHtml));
+app.get(
+    '/swagger',
+    swaggerUI({
+        url: '/doc',
+    })
+);
 
 app.onError((err, c) => {
     console.error(`${err}`);
