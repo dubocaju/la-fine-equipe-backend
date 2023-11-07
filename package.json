@@ -4,14 +4,15 @@
     "generate": "drizzle-kit generate:sqlite"
   },
   "dependencies": {
-    "@hono/zod-openapi": "^0.8.2",
+    "@hono/swagger-ui": "^0.1.0",
+    "@hono/zod-openapi": "^0.8.3",
     "drizzle-orm": "^0.28.6",
-    "hono": "^3.9.0",
-    "jose": "^5.0.1",
+    "hono": "^3.9.2",
+    "jose": "^5.1.0",
     "zod": "^3.22.4"
   },
   "devDependencies": {
-    "bun-types": "^1.0.7",
+    "bun-types": "^1.0.9",
     "drizzle-kit": "^0.19.13",
     "prettier": "3.0.3"
   }
