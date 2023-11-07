@@ -1,30 +1,31 @@
-import { zValidator } from '@hono/zod-validator';
+import { OpenAPIHono, createRoute } from '@hono/zod-openapi';
 import { Database } from 'bun:sqlite';
 import { eq } from 'drizzle-orm';
 import { migrate } from 'drizzle-orm/better-sqlite3/migrator';
 import { BunSQLiteDatabase, drizzle } from 'drizzle-orm/bun-sqlite';
-import { Hono } from 'hono';
 import { cors } from 'hono/cors';
 import * as jose from 'jose';
 import { z } from 'zod';
-import { signInUserSchema, signUpUserSchema, users } from './db/schema/users';
+import { users } from './db/schemas/users';
 import { JWT_ISSUER, JWT_SECRET } from './jwtConfig';
+import { signInRoute, signUpRoute } from './openapi/routes/user';
+import { swaggerUI } from '@hono/swagger-ui';
 
 const sqlite: Database = new Database('database.sqlite');
 const db: BunSQLiteDatabase = drizzle(sqlite);
 migrate(db, { migrationsFolder: 'migrations' });
 
-const app = new Hono();
+const app = new OpenAPIHono();
 
 app.use('/api/*', cors());
 
-app.post('/api/sign-up', zValidator('json', signUpUserSchema), async (c) => {
+app.openapi(signUpRoute, async (c) => {
     const user = c.req.valid('json');
     await db.insert(users).values(user);
     return c.body(null, 201);
 });
 
-app.post('/api/sign-in', zValidator('json', signInUserSchema), async (c) => {
+app.openapi(signInRoute, async (c) => {
     const body = c.req.valid('json');
     const result = await db
         .select()
@@ -45,8 +46,25 @@ app.post('/api/sign-in', zValidator('json', signInUserSchema), async (c) => {
         .setIssuer(JWT_ISSUER)
         .sign(JWT_SECRET);
 
-    return c.json({ token: jwt }, 200);
+    const userPayload = {
+        securityNumber: user.securityNumber,
+        firstName: user.firstName,
+        lastName: user.lastName,
+    };
+
+    return c.json({ user: userPayload, token: jwt }, 200);
 });
+
+
+app.get('/swagger', swaggerUI({url: '/doc' }))
+  
+app.doc('/doc', {
+    openapi: '3.1.0',
+    info: {
+        title: 'DMI',
+        version: '1.0.0'
+    },
+})
 
 app.onError((err, c) => {
     console.error(`${err}`);
@@ -56,5 +74,4 @@ app.onError((err, c) => {
     return c.text('Internal Server Error', 500);
 });
 
-app.showRoutes();
 export default app;

@@ -1,5 +1,4 @@
 import { sqliteTable, integer, text } from 'drizzle-orm/sqlite-core';
-import { createInsertSchema, createSelectSchema } from 'drizzle-zod';
 
 export const users = sqliteTable('user', {
     id: integer('id').primaryKey(),
@@ -10,14 +9,3 @@ export const users = sqliteTable('user', {
 });
 
 export type User = typeof users.$inferSelect;
-
-const selectUserSchema = createSelectSchema(users);
-
-export const signUpUserSchema = createInsertSchema(users).omit({
-    id: true,
-});
-
-export const signInUserSchema = selectUserSchema.pick({
-    securityNumber: true,
-    password: true,
-});
