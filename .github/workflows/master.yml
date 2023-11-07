@@ -52,6 +52,6 @@ jobs:
         runs-on: ubuntu-latest
         steps:
             - name: Install sshpass
-                run: sudo apt-get update && sudo apt-get install -y sshpass
+              run: sudo apt-get update && sudo apt-get install -y sshpass
             - name: Deploy on mikl
-                run: sshpass -p ${{ secrets.SSH_PASS }} ssh -p 8274 -o StrictHostKeyChecking=no ${{ env.SERVER_USER }}@${{ env.SERVER_IP }} "docker compose -p dmi -f /opt/compose/violet/dmi.docker-compose.yml pull && docker compose -p dmi -f /opt/compose/violet/dmi.docker-compose.yml up -d"
+              run: sshpass -p ${{ secrets.SSH_PASS }} ssh -p 8274 -o StrictHostKeyChecking=no ${{ env.SERVER_USER }}@${{ env.SERVER_IP }} "docker compose -p dmi -f /opt/compose/violet/dmi.docker-compose.yml pull && docker compose -p dmi -f /opt/compose/violet/dmi.docker-compose.yml up -d"
