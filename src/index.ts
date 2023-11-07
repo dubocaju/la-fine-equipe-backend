@@ -8,7 +8,11 @@ import * as jose from 'jose';
 import { z } from 'zod';
 import { users } from './db/schemas/users';
 import { JWT_ISSUER, JWT_SECRET } from './jwtConfig';
-import { signInRoute, signUpRoute } from './openapi/routes/user';
+import {
+    getAllUsersRoute,
+    signInRoute,
+    signUpRoute,
+} from './openapi/routes/user';
 import { swaggerUI } from '@hono/swagger-ui';
 
 const sqlite: Database = new Database('database.sqlite');
@@ -55,16 +59,27 @@ app.openapi(signInRoute, async (c) => {
     return c.json({ user: userPayload, token: jwt }, 200);
 });
 
+app.openapi(getAllUsersRoute, async (c) => {
+    const result = await db
+        .select({
+            securityNumber: users.securityNumber,
+            firstName: users.firstName,
+            lastName: users.lastName,
+        })
+        .from(users);
 
-app.get('/swagger', swaggerUI({url: '/doc' }))
-  
+    return c.json({ users: result }, 200);
+});
+
+app.get('/swagger', swaggerUI({ url: '/doc' }));
+
 app.doc('/doc', {
     openapi: '3.1.0',
     info: {
         title: 'DMI',
-        version: '1.0.0'
+        version: '0.1.1',
     },
-})
+});
 
 app.onError((err, c) => {
     console.error(`${err}`);

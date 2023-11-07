@@ -10,6 +10,12 @@ const userSchema = z
     })
     .openapi('User');
 
+const userPayloadSchema = userSchema.pick({
+    securityNumber: true,
+    firstName: true,
+    lastName: true,
+});
+
 const signUpBodySchema = userSchema.omit({
     id: true,
 });
@@ -36,11 +42,7 @@ const signInBodySchema = userSchema.pick({
 });
 
 const signInResponseSchema = z.object({
-    user: userSchema.pick({
-        securityNumber: true,
-        firstName: true,
-        lastName: true,
-    }),
+    user: userPayloadSchema,
     token: z.string().openapi({
         example:
             'eyJhbGciOiJIUzI1NiJ9.eyJpZCI6MSwiaWF0IjoxNjk4NDAxNDkwLCJpc3MiOiJETUkifQ.rwKkKeft1-EDYxz9h-K28YVgBmkFCPU07ovsufaniCA',
@@ -66,6 +68,26 @@ export const signInRoute = createRoute({
             content: {
                 'application/json': {
                     schema: signInResponseSchema,
+                },
+            },
+        },
+    },
+});
+
+const getAllResponseSchema = z.object({
+    users: z.array(userPayloadSchema),
+});
+
+export const getAllUsersRoute = createRoute({
+    method: 'get',
+    path: '/api/users',
+    description: 'Get users list',
+    responses: {
+        200: {
+            description: 'Success',
+            content: {
+                'application/json': {
+                    schema: getAllResponseSchema,
                 },
             },
         },
