@@ -10,7 +10,7 @@ const userSchema = z
     })
     .openapi('User');
 
-const signUpUserSchema = userSchema.omit({
+const signUpBodySchema = userSchema.omit({
     id: true,
 });
 
@@ -21,7 +21,7 @@ export const signUpRoute = createRoute({
     request: {
         body: {
             content: {
-                'application/json': { schema: signUpUserSchema },
+                'application/json': { schema: signUpBodySchema },
             },
         },
     },
@@ -30,9 +30,21 @@ export const signUpRoute = createRoute({
     },
 });
 
-const signInUserSchema = userSchema.pick({
+const signInBodySchema = userSchema.pick({
     securityNumber: true,
     password: true,
+});
+
+const signInResponseSchema = z.object({
+    user: userSchema.pick({
+        securityNumber: true,
+        firstName: true,
+        lastName: true,
+    }),
+    token: z.string().openapi({
+        example:
+            'eyJhbGciOiJIUzI1NiJ9.eyJpZCI6MSwiaWF0IjoxNjk4NDAxNDkwLCJpc3MiOiJETUkifQ.rwKkKeft1-EDYxz9h-K28YVgBmkFCPU07ovsufaniCA',
+    }),
 });
 
 export const signInRoute = createRoute({
@@ -42,13 +54,20 @@ export const signInRoute = createRoute({
     request: {
         body: {
             content: {
-                'application/json': { schema: signInUserSchema },
+                'application/json': { schema: signInBodySchema },
             },
         },
     },
     responses: {
         404: { description: 'User not found' },
         401: { description: 'Wrong password' },
-        200: { description: 'Sign in success' },
+        200: {
+            description: 'Sign in success',
+            content: {
+                'application/json': {
+                    schema: signInResponseSchema,
+                },
+            },
+        },
     },
 });
