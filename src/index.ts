@@ -1,4 +1,4 @@
-import { OpenAPIHono } from '@hono/zod-openapi';
+import { OpenAPIHono, createRoute } from '@hono/zod-openapi';
 import { Database } from 'bun:sqlite';
 import { eq } from 'drizzle-orm';
 import { migrate } from 'drizzle-orm/better-sqlite3/migrator';
@@ -16,6 +16,7 @@ const db: BunSQLiteDatabase = drizzle(sqlite);
 migrate(db, { migrationsFolder: 'migrations' });
 
 const app = new OpenAPIHono();
+
 app.use('/api/*', cors());
 
 app.openapi(signUpRoute, async (c) => {
@@ -54,20 +55,16 @@ app.openapi(signInRoute, async (c) => {
     return c.json({ user: userPayload, token: jwt }, 200);
 });
 
-app.doc('/doc/', {
-    openapi: '3.0.0',
-    info: {
-        version: '1.0.0',
-        title: 'DMI',
-    },
-});
 
-app.get(
-    '/swagger',
-    swaggerUI({
-        url: '/doc',
-    })
-);
+app.get('/swagger', swaggerUI({url: '/doc' }))
+  
+app.doc('/doc', {
+    openapi: '3.1.0',
+    info: {
+        title: 'DMI',
+        version: '1.0.0'
+    },
+})
 
 app.onError((err, c) => {
     console.error(`${err}`);
