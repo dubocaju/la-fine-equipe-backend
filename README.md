@@ -17,12 +17,6 @@ curl -fsSL https://bun.sh/install | bash
 
 Si la commande bun n'est pas reconnue après l'installation, essayer de l'ajouter manuellement au path (voir [ici](https://dev.to/vanwildemeerschbrent/bun-command-not-found-on-linux-4n16))
 
-### Pour créer la base de données sqlite (racine du projet) :
-
-```bash
-touch database.sqlite
-```
-
 ### Pour installer les dépendances et lancer le projet en local
 
 ```bash
