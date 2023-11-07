@@ -10,6 +10,8 @@ on:
 env:
     REGISTRY: ghcr.io
     IMAGE_NAME: ${{ github.repository }}
+    SERVER_IP: middle.mikl.fr
+    SERVER_USER: docker_worker
 
 # There is a single job in this workflow. It's configured to run on the latest available version of Ubuntu.
 jobs:
@@ -46,3 +48,10 @@ jobs:
                   push: true
                   tags: ${{ steps.meta.outputs.tags }}
                   labels: ${{ steps.meta.outputs.labels }}
+    deploy:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Install sshpass
+                run: sudo apt-get update && sudo apt-get install -y sshpass
+            - name: Deploy on mikl
+                run: sshpass -p ${{ secrets.SSH_PASS }} ssh -p 8274 -o StrictHostKeyChecking=no ${{ env.SERVER_USER }}@${{ env.SERVER_IP }} "docker compose -p dmi -f /opt/compose/violet/dmi.docker-compose.yml pull && docker compose -p dmi -f /opt/compose/violet/dmi.docker-compose.yml up -d"
