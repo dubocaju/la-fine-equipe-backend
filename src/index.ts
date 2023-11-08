@@ -74,16 +74,13 @@ app.openapi(getAllUsersRoute, async (c) => {
 
 app.get('/swagger', swaggerUI({ url: `${apiPath}/doc` }));
 
-app.doc(`${apiPath}/doc`, {
+app.doc(`/doc`, {
     openapi: '3.1.0',
     info: {
         title: 'DMI',
         version: '0.1.1',
     },
-    servers: [
-        { url: '/api/module/dmi', description: 'production' },
-        { url: '/', description: 'local' },
-    ],
+    servers: [{ url: apiPath, description: 'default' }],
 });
 
 app.onError((err, c) => {
