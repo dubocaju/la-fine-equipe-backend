@@ -15,6 +15,7 @@ import {
 } from './openapi/routes/user';
 import { swaggerUI } from '@hono/swagger-ui';
 
+const apiPath = process.env.API_PATH ?? '';
 const sqlite: Database = new Database('database.sqlite');
 const db: BunSQLiteDatabase = drizzle(sqlite);
 migrate(db, { migrationsFolder: 'migrations' });
@@ -71,9 +72,9 @@ app.openapi(getAllUsersRoute, async (c) => {
     return c.json({ users: result }, 200);
 });
 
-app.get('/swagger', swaggerUI({ url: '/doc' }));
+app.get('/swagger', swaggerUI({ url: `${apiPath}/doc` }));
 
-app.doc('/doc', {
+app.doc(`${apiPath}/doc`, {
     openapi: '3.1.0',
     info: {
         title: 'DMI',
