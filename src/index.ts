@@ -79,6 +79,10 @@ app.doc('/doc', {
         title: 'DMI',
         version: '0.1.1',
     },
+    servers: [
+        { url: '/api/module/dmi', description: 'production' },
+        { url: '/', description: 'local' },
+    ],
 });
 
 app.onError((err, c) => {
