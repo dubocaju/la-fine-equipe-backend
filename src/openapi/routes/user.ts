@@ -24,7 +24,6 @@ export const signUpRoute = createRoute({
     method: 'post',
     path: '/sign-up',
     description: 'Sign up (create a new user in the database)',
-    tags: ['Users'],
     request: {
         body: {
             content: {
@@ -54,7 +53,6 @@ export const signInRoute = createRoute({
     method: 'post',
     path: '/sign-in',
     description: 'Sign in (authenticate to an existing user)',
-    tags: ['Users'],
     request: {
         body: {
             content: {
@@ -84,7 +82,6 @@ export const getAllUsersRoute = createRoute({
     method: 'get',
     path: '/users',
     description: 'Get users list',
-    tags: ['Users'],
     responses: {
         200: {
             description: 'Success',
