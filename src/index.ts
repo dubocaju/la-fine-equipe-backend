@@ -1,4 +1,4 @@
-import { OpenAPIHono, createRoute } from '@hono/zod-openapi';
+import { OpenAPIHono} from '@hono/zod-openapi';
 import { Database } from 'bun:sqlite';
 import { eq } from 'drizzle-orm';
 import { migrate } from 'drizzle-orm/better-sqlite3/migrator';
@@ -13,9 +13,18 @@ import {
     signInRoute,
     signUpRoute,
 } from './openapi/routes/user';
+
+import {
+    getAllMedActRoute,
+    getAllMedActOfGivedPatientRoute,
+    validateMedActRoute,
+} from './openapi/routes/medicalAct';
+
 import { swaggerUI } from '@hono/swagger-ui';
 
+const middlewareURL = "http://middle.mikl.fr/api/module";
 const apiPath = process.env.API_PATH ?? '';
+
 const sqlite: Database = new Database('database.sqlite');
 const db: BunSQLiteDatabase = drizzle(sqlite);
 migrate(db, { migrationsFolder: 'migrations' });
@@ -72,7 +81,48 @@ app.openapi(getAllUsersRoute, async (c) => {
     return c.json({ users: result }, 200);
 });
 
-app.get('/swagger', swaggerUI({ url: `${apiPath}/doc` }));
+app.openapi(getAllMedActRoute, async (c) => {
+    const response = await fetch(middlewareURL + '/hopital/medAct', {
+        method : 'GET',
+        headers : { 
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+        }
+    })
+    const result = await response.json();
+    return c.json({ medicalActs: result }, 200);
+})
+
+app.openapi(getAllMedActOfGivedPatientRoute, async (c) => {
+    const { userId }  = c.req.valid('param');
+    const response = await fetch(middlewareURL + '/hopital/patient/' + userId + '/medAct', {
+        method : 'GET',
+        headers : {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+        }
+    })
+    const result = await response.json();
+
+    return c.json({ medicalActs: result }, 200);
+});
+
+app.openapi(validateMedActRoute, async (c) => {
+    const { medActId }  = c.req.valid('param');
+    const response = await fetch(middlewareURL + '/hopital/' + medActId + '/validate', {
+        method : 'PATCH',
+        headers : {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+        }
+    })
+    const result = await response.json();
+
+    return c.json({ comment: result }, 200);
+});
+
+
+app.get('/swagger', swaggerUI({ url: '/doc' }));
 
 app.doc(`/doc`, {
     openapi: '3.1.0',
@@ -80,6 +130,13 @@ app.doc(`/doc`, {
         title: 'DMI',
         version: '0.1.1',
     },
+    tags: [{
+            name: 'Users',
+            description: 'All routes user-related',
+        }, {
+            name: 'Medical acts',
+            description: 'All routes that concern medical acts',
+        },],
     servers: [{ url: apiPath, description: 'default' }],
 });
 
