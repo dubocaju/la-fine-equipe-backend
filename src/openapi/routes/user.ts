@@ -22,7 +22,7 @@ const signUpBodySchema = userSchema.omit({
 
 export const signUpRoute = createRoute({
     method: 'post',
-    path: '/api/sign-up',
+    path: '/sign-up',
     description: 'Sign up (create a new user in the database)',
     request: {
         body: {
@@ -51,7 +51,7 @@ const signInResponseSchema = z.object({
 
 export const signInRoute = createRoute({
     method: 'post',
-    path: '/api/sign-in',
+    path: '/sign-in',
     description: 'Sign in (authenticate to an existing user)',
     request: {
         body: {
@@ -80,7 +80,7 @@ const getAllResponseSchema = z.object({
 
 export const getAllUsersRoute = createRoute({
     method: 'get',
-    path: '/api/users',
+    path: '/users',
     description: 'Get users list',
     responses: {
         200: {
