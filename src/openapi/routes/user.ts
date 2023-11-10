@@ -36,3 +36,38 @@ export const getAllUsersRoute = createRoute({
         },
     },
 });
+
+const getUserParamsSchema = z.object({
+    securityNumber: z.string().openapi({
+        param: {
+            name: 'securityNumber',
+            in: 'path',
+        },
+        example: '123-123-123',
+    }),
+});
+
+const getUserResponseSchema = z.object({
+    user: userPayloadSchema,
+});
+
+export const getUserRoute = createRoute({
+    tags: ['users'],
+    method: 'get',
+    path: '/{securityNumber}',
+    request: {
+        params: getUserParamsSchema,
+    },
+    description: 'Get a specific user by their security number',
+    responses: {
+        404: { description: 'User not found' },
+        200: {
+            description: 'Success',
+            content: {
+                'application/json': {
+                    schema: getUserResponseSchema,
+                },
+            },
+        },
+    },
+});
