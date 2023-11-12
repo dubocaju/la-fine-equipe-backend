@@ -56,7 +56,7 @@ app.openapi(getAllUsersRoute, async (c) => {
     return c.json({ users: result }, 200);
 });
 
-app.route('/medAct', medAct);
+app.route('/medAct', medApp);
 
 app.get('/swagger', swaggerUI({ url: '/doc' }));
 
@@ -66,16 +66,6 @@ app.doc(`/doc`, {
         title: 'DMI',
         version: '0.1.2',
     },
-    tags: [
-        {
-            name: 'Users',
-            description: 'All routes user-related',
-        },
-        {
-            name: 'Medical acts',
-            description: 'All routes that concern medical acts',
-        },
-    ],
     servers: [{ url: apiPath, description: 'default' }],
 });
 
