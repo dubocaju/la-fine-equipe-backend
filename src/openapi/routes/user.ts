@@ -1,4 +1,5 @@
 import { createRoute, z } from '@hono/zod-openapi';
+import { selectQuerySchema } from '../REST_QuerySchema';
 
 export const userSchema = z
     .object({
@@ -25,6 +26,9 @@ export const getAllUsersRoute = createRoute({
     method: 'get',
     path: '',
     description: 'Get users list',
+    request: {
+        query: selectQuerySchema,
+    },
     responses: {
         200: {
             description: 'Success',

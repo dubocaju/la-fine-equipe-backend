@@ -4,8 +4,8 @@ import { cors } from 'hono/cors';
 import { z } from 'zod';
 import authApp from './routes/auth';
 import userApp from './routes/user';
+import medApp from './routes/medicalActs';
 
-import { medAct } from './openapi/app/medicalActs';
 const apiPath = process.env.API_PATH ?? '';
 const app = new OpenAPIHono();
 
@@ -13,50 +13,10 @@ app.use('*', cors());
 
 app.route('/auth', authApp);
 app.route('/users', userApp);
-
-app.openapi(signInRoute, async (c) => {
-    const body = c.req.valid('json');
-    const result = await db
-        .select()
-        .from(users)
-        .where(eq(users.securityNumber, body.securityNumber));
-    const user = result.shift();
-
-    if (!user) {
-        return c.text('User not found', 404);
-    }
-    if (user.password !== body.password) {
-        return c.text('Wrong password', 401);
-    }
-
-    const jwt = await new jose.SignJWT({ id: user.id })
-        .setProtectedHeader({ alg: 'HS256' })
-        .setIssuedAt()
-        .setIssuer(JWT_ISSUER)
-        .sign(JWT_SECRET);
-
-    const userPayload = {
-        securityNumber: user.securityNumber,
-        firstName: user.firstName,
-        lastName: user.lastName,
-    };
-
-    return c.json({ user: userPayload, token: jwt }, 200);
-});
-
-app.openapi(getAllUsersRoute, async (c) => {
-    const result = await db
-        .select({
-            securityNumber: users.securityNumber,
-            firstName: users.firstName,
-            lastName: users.lastName,
-        })
-        .from(users);
-
-    return c.json({ users: result }, 200);
-});
-
 app.route('/medAct', medApp);
+
+const port = parseInt(process.env.PORT!) || 3000;
+console.log(`DMI running at http://localhost:${port}`);
 
 app.get('/swagger', swaggerUI({ url: '/doc' }));
 

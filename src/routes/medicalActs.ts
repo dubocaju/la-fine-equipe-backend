@@ -5,6 +5,7 @@ import {
     getAllMedActOfGivedPatientRoute,
     validateMedActRoute,
 } from '../openapi/routes/medicalAct';
+import { parseQuery } from '../openapi/REST_QuerySchema';
 
 const middlewareURL = 'http://middle.mikl.fr/api/module';
 const middlewareHeaders = {
@@ -75,17 +76,22 @@ const dummyMedActs = [
 ];
 
 medApp.openapi(getAllMedActRoute, async (c) => {
+    console.log('getAllMedActRoute');
     const { select, filter, sortBy, orderBy } = c.req.valid('query');
-    console.log(
-        'select : ',
-        select,
-        'filter : ',
-        filter,
-        'sortBy :',
-        sortBy,
-        ' orderBy :',
-        orderBy
-    );
+    // parseQuery(
+
+    //);
+
+    // console.log(
+    //     'select : ',
+    //     select,
+    //     'filter : ',
+    //     filter,
+    //     'sortBy :',
+    //     sortBy,
+    //     ' orderBy :',
+    //     orderBy
+    // );
     // const response = await fetch(middlewareURL + '/hopital/medAct', {
     //     method: 'GET',
     //     headers: middlewareHeaders,
@@ -96,10 +102,10 @@ medApp.openapi(getAllMedActRoute, async (c) => {
 });
 
 medApp.openapi(getAllMedActOfGivedPatientRoute, async (c) => {
-    const { patienId } = c.req.valid('param');
-    console.log('patienId: ', patienId);
+    const { userId } = c.req.valid('param');
+    console.log('patienId: ', userId);
     const response = await fetch(
-        middlewareURL + '/hopital/patient/' + patienId + '/medAct',
+        middlewareURL + '/hopital/patient/' + userId + '/medAct',
         {
             method: 'GET',
             headers: middlewareHeaders,

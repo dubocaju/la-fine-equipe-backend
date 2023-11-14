@@ -2,7 +2,7 @@ import * as z from 'zod';
 
 export const selectQuerySchema = z.object({
     select: z
-        .string() // ou z.array(z.string) ? voir .refine()
+        .string()
         .optional()
         .openapi({
             param: {
@@ -10,11 +10,19 @@ export const selectQuerySchema = z.object({
                 name: 'select',
                 required: false,
             },
-            example: 'select=firstName,lastName,job',
+            example: 'firstName,lastName',
         }),
     filter: z
-        .string() // ou z.array(z.string) ? voir .refine()
+        .string()
         .optional()
+        .transform((val) => {
+            if (!val) return val;
+            return val.split(' ');
+        })
+        .refine((array) => !array || array.length % 3 === 0, {
+            message:
+                "Filter option should always be three element, as : 'PropertyName' -eq|gt|lt value",
+        })
         .openapi({
             param: {
                 in: 'query',
@@ -33,8 +41,14 @@ export const selectQuerySchema = z.object({
             },
         }),
     orderBy: z
-        .string()
+        .enum(['asc', 'desc', 'Ascending', 'Descending'])
         .optional()
+        .transform((val) => {
+            if (val === 'Ascending') return 'asc';
+            if (val === 'Descending') return 'desc';
+            return val;
+        })
+        .default('asc')
         .openapi({
             param: {
                 in: 'query',
@@ -43,3 +57,13 @@ export const selectQuerySchema = z.object({
             },
         }),
 });
+
+export const parseQuery = (query: any) => {
+    // TODO: parse 4 filter
+    return {
+        select: query.select,
+        filter: query.filter,
+        sortBy: query.sortBy,
+        orderBy: query.orderBy,
+    };
+};
