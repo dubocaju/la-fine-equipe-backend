@@ -19,6 +19,9 @@ export const signUpRoute = createRoute({
         },
     },
     responses: {
+        400: {
+            description: 'A user with the same security number already exists',
+        },
         201: { description: 'Sign up success' },
     },
 });
