@@ -10,8 +10,21 @@ const db = DatabaseSingleton.getInstance().db;
 const authApp = new OpenAPIHono();
 
 authApp.openapi(signUpRoute, async (c) => {
-    const user = c.req.valid('json');
-    await db.insert(users).values(user);
+    const body = c.req.valid('json');
+
+    const user = await db
+        .select({ id: users.id })
+        .from(users)
+        .where(eq(users.securityNumber, body.securityNumber));
+
+    if (user.shift() !== undefined) {
+        return c.text(
+            'A user with the same security number already exists',
+            400
+        );
+    }
+
+    await db.insert(users).values(body);
     return c.body(null, 201);
 });
 
