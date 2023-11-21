@@ -6,6 +6,7 @@ import authApp from './routes/auth';
 import userApp from './routes/user';
 
 const apiPath = process.env.API_PATH ?? '';
+const swaggerPath = process.env.SWAGGER_PATH ?? '';
 const app = new OpenAPIHono();
 
 app.use('*', cors());
@@ -22,7 +23,7 @@ app.doc(`/doc`, {
     servers: [{ url: apiPath, description: 'default' }],
 });
 
-app.get('/swagger', swaggerUI({ url: `${apiPath}/doc` }));
+app.get('/swagger', swaggerUI({ url: `${swaggerPath}/doc` }));
 
 app.onError((err, c) => {
     console.error(`${err}`);
